@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class DonutTile extends StatelessWidget {
+class BurgerTile extends StatelessWidget {
 
-  final String donutFlavor;
-  final String donutPrice;
-  final dynamic donutColor;
-  final String donutImagePath;
-  final String donutProvider;
+  final String burgerFlavor;
+  final String burgerPrice;
+  final dynamic burgerColor;
+  final String burgerImagePath;
+  final String burgerProvider;
 
-  const DonutTile ({super.key,
-  required this.donutFlavor,
-  required this.donutPrice,
-  required this.donutColor,
-  required this.donutImagePath,
-  required this.donutProvider });
+  const BurgerTile ({super.key,
+  required this.burgerFlavor,
+  required this.burgerPrice,
+  required this.burgerColor,
+  required this.burgerImagePath,
+  required this.burgerProvider });
 
   @override
   Widget build(BuildContext context) 
@@ -22,7 +22,7 @@ class DonutTile extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: Container (
         decoration: BoxDecoration(
-          color:donutColor[100],
+          color:burgerColor[100],
           //Bordes redondeados
           borderRadius: BorderRadius.circular(24),
           ),
@@ -39,16 +39,16 @@ class DonutTile extends StatelessWidget {
                     horizontal: 18,
                     ),
                     decoration: BoxDecoration(
-                      color: donutColor[200],
+                      color: burgerColor[200],
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(24),
                         bottomLeft: Radius.circular(24),
                       )),
-                      child: Text('\$$donutPrice',
+                      child: Text('\$$burgerPrice',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: donutColor[800],
+                        color: burgerColor[800],
 
                         ),
                       )
@@ -59,11 +59,11 @@ class DonutTile extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: 12, horizontal: 24),
-                  child: Image.asset(donutImagePath),
+                  child: Image.asset(burgerImagePath),
                 ),
                 //Nombre del donut
                 Text(
-                  donutFlavor,
+                  burgerFlavor,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
@@ -72,7 +72,7 @@ class DonutTile extends StatelessWidget {
                 //Espacio entre textos
                 const SizedBox(height: 4),
                 //Nombre del proveedor
-                Text(donutProvider, style: 
+                Text(burgerProvider, style: 
                   TextStyle(
                     color: Colors.grey[600])),
                 //Icono de favorito y carrito de compras
