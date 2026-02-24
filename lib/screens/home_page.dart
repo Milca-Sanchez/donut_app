@@ -1,3 +1,4 @@
+import 'package:donut_app/models/cart.dart';
 import 'package:donut_app/utils/my_tab.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,7 @@ import '../tab/donut_tab.dart';
 import '../tab/pancake_tab.dart';
 import '../tab/pizza_tab.dart';
 import '../tab/smoothie_tab.dart';
+import '../screens/cart_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,6 +32,11 @@ class _HomePageState extends State<HomePage> {
     //pizza tab
     const MyTab(iconPath: 'lib/icons/pizza.png', iconName: 'Pizza'),
   ];
+
+  //Refrescar el contador del carrito
+  void updateCart() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +84,11 @@ class _HomePageState extends State<HomePage> {
           child: TabBarView
           (//controller: _tabController,
           children: [
-            DonutTab(),
-            BurgerTab(),
-            SmoothieTab(),
-            PancakeTab(),
-            PizzaTab(),
+            DonutTab(onCartUpdated: updateCart),
+            BurgerTab(onCartUpdated: updateCart),
+            SmoothieTab(onCartUpdated: updateCart),
+            PancakeTab(onCartUpdated: updateCart),
+            PizzaTab(onCartUpdated: updateCart),
          ],)
          ),
          //4. Carrito (cart)
@@ -97,7 +104,8 @@ class _HomePageState extends State<HomePage> {
                   //Alinear a la izquierda (horizontalmente)
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('2 Items | \$45',
+                    //Mostrar cantidad de items y total dinámicamente
+                    Text('${Cart.getCount()} Items | \$${Cart.getTotal().toStringAsFixed(0)}',
                     style:TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -110,7 +118,15 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ),
                 ElevatedButton(
-                  onPressed: () {}, 
+                  onPressed: () {
+                    //Navegar a la pantalla del carrito
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CartScreen(onCartUpdated: updateCart),
+                      ),
+                    );
+                  }, 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.pink[400],
                   ),

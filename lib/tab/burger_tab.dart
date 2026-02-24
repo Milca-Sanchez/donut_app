@@ -2,9 +2,10 @@ import 'package:donut_app/utils/burger_tile.dart';
 import 'package:flutter/material.dart';
 
 class BurgerTab extends StatelessWidget {
-  BurgerTab({super.key});
+  BurgerTab({super.key, required this.onCartUpdated});
 
-  // Lista de hamburguesas
+  final VoidCallback onCartUpdated;
+
   final List burgerOnSale = [
     [
       'Classic Burger',
@@ -25,7 +26,7 @@ class BurgerTab extends StatelessWidget {
       '160',
       Colors.red,
       'lib/images/burger-2.png',
-      'Carl’s Jr',
+      'Carl\'s Jr',
     ],
     [
       'Classic Chicken Delight',
@@ -51,6 +52,7 @@ class BurgerTab extends StatelessWidget {
           burgerColor: burgerOnSale[index][2],
           burgerImagePath: burgerOnSale[index][3],
           burgerProvider: burgerOnSale[index][4],
+          onCartUpdated: onCartUpdated,
         );
       },
     );

@@ -2,11 +2,11 @@ import 'package:donut_app/utils/pancake_tile.dart';
 import 'package:flutter/material.dart';
 
 class PancakeTab extends StatelessWidget {
-   PancakeTab({super.key});
+   PancakeTab({super.key, required this.onCartUpdated});
 
-  //List of donuts
+  final VoidCallback onCartUpdated;
+
   final List pancakeOnSale = [
-    // donutFlavor, donutPrice, donutColor, donutImagePath, donutProvider
     [
       'Strawberry ice cream',
       '140',
@@ -52,9 +52,9 @@ class PancakeTab extends StatelessWidget {
         pancakeColor: pancakeOnSale[index][2],
         pancakeImagePath: pancakeOnSale[index][3],
         pancakeProvider: pancakeOnSale[index][4],
+        onCartUpdated: onCartUpdated,
         );
       },
     );
   }
 }
- 

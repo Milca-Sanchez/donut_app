@@ -1,3 +1,5 @@
+import 'package:donut_app/models/cart.dart';
+import 'package:donut_app/models/cart_item.dart';
 import 'package:flutter/material.dart';
 
 class PancakeTile extends StatelessWidget {
@@ -7,13 +9,15 @@ class PancakeTile extends StatelessWidget {
   final dynamic pancakeColor;
   final String pancakeImagePath;
   final String pancakeProvider;
+  final VoidCallback onCartUpdated; // actualice el contador
 
   const PancakeTile ({super.key,
   required this.pancakeFlavor,
   required this.pancakePrice,
   required this.pancakeColor,
   required this.pancakeImagePath,
-  required this.pancakeProvider });
+  required this.pancakeProvider,
+  required this.onCartUpdated });
 
   @override
   Widget build(BuildContext context) 
@@ -82,12 +86,32 @@ class PancakeTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Icon(Icons.favorite_border, color: Colors.pink[400]),
-                      Text("Add", 
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
-                      ),
+                      GestureDetector(
+                        onTap: () {
+                          //Agregar al carrito
+                          Cart.addItem(CartItem(
+                            name: pancakeFlavor,
+                            price: pancakePrice,
+                            imagePath: pancakeImagePath,
+                          ));
+                          //Actualizar el contador 
+                          onCartUpdated();
+                          //Mensaje de confirmación
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('$pancakeFlavor added to cart!'),
+                              duration: const Duration(seconds: 1),
+                              backgroundColor: Colors.pink[400],
+                            ),
+                          );
+                        },
+                        child: Text("Add", 
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                        ),
+                        ),
                       ),
                     ],
                   ),

@@ -2,11 +2,12 @@ import 'package:donut_app/utils/smoothie_tile.dart';
 import 'package:flutter/material.dart';
 
 class SmoothieTab extends StatelessWidget {
-   SmoothieTab({super.key});
+   SmoothieTab({super.key, required this.onCartUpdated});
 
-  //List of donuts
+
+  final VoidCallback onCartUpdated;
+
   final List smoothieOnSale = [
-    // donutFlavor, donutPrice, donutColor, donutImagePath, donutProvider
     [
       'Red Fruits',
       '90',
@@ -51,9 +52,9 @@ class SmoothieTab extends StatelessWidget {
         smoothieColor: smoothieOnSale[index][2],
         smoothieImagePath: smoothieOnSale[index][3],
         smoothieProvider: smoothieOnSale[index][4],
+        onCartUpdated: onCartUpdated,
         );
       },
     );
   }
 }
- 

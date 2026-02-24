@@ -2,11 +2,11 @@ import 'package:donut_app/utils/pizza_tile.dart';
 import 'package:flutter/material.dart';
 
 class PizzaTab extends StatelessWidget {
-   PizzaTab({super.key});
+   PizzaTab({super.key, required this.onCartUpdated});
 
-  //List of donuts
+  final VoidCallback onCartUpdated;
+
   final List pizzaOnSale = [
-    // donutFlavor, donutPrice, donutColor, donutImagePath, donutProvider
     [
       'Spinach',
       '210',
@@ -51,9 +51,9 @@ class PizzaTab extends StatelessWidget {
         pizzaColor: pizzaOnSale[index][2],
         pizzaImagePath: pizzaOnSale[index][3],
         pizzaProvider: pizzaOnSale[index][4],
+        onCartUpdated: onCartUpdated,
         );
       },
     );
   }
 }
- 

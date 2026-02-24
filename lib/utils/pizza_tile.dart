@@ -1,3 +1,5 @@
+import 'package:donut_app/models/cart.dart';
+import 'package:donut_app/models/cart_item.dart';
 import 'package:flutter/material.dart';
 
 class PizzaTile extends StatelessWidget {
@@ -7,13 +9,15 @@ class PizzaTile extends StatelessWidget {
   final dynamic pizzaColor;
   final String pizzaImagePath;
   final String pizzaProvider;
+  final VoidCallback onCartUpdated; // actualice el contador
 
   const PizzaTile ({super.key,
   required this.pizzaFlavor,
   required this.pizzaPrice,
   required this.pizzaColor,
   required this.pizzaImagePath,
-  required this.pizzaProvider });
+  required this.pizzaProvider,
+  required this.onCartUpdated });
 
   @override
   Widget build(BuildContext context) 
@@ -82,12 +86,32 @@ class PizzaTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Icon(Icons.favorite_border, color: Colors.pink[400]),
-                      Text("Add", 
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
-                      ),
+                      GestureDetector(
+                        onTap: () {
+                          //Agregar al carrito
+                          Cart.addItem(CartItem(
+                            name: pizzaFlavor,
+                            price: pizzaPrice,
+                            imagePath: pizzaImagePath,
+                          ));
+                          //Actualizar el contador
+                          onCartUpdated();
+                          //Mensaje de confirmación
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('$pizzaFlavor added to cart!'),
+                              duration: const Duration(seconds: 1),
+                              backgroundColor: Colors.pink[400],
+                            ),
+                          );
+                        },
+                        child: Text("Add", 
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                        ),
+                        ),
                       ),
                     ],
                   ),
