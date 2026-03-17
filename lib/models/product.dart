@@ -1,15 +1,15 @@
-class CartItem {
+class Product {
   final String name;
   final String price;
   final String category;
-  int quantity;
+  final String description;
+  final dynamic color;
 
-  CartItem({
+  const Product({
     required this.name,
     required this.price,
     required this.category,
-    this.quantity = 1,
+    required this.description,
+    required this.color,
   });
-
-  double get totalPrice => double.parse(price) * quantity;
 }

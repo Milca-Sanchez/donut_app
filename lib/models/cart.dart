@@ -3,51 +3,51 @@ import 'cart_item.dart';
 class Cart {
   static List<CartItem> items = [];
 
-  static void addItem(CartItem item) {
-    int index = items.indexWhere(
-      (i) => i.name == item.name && i.imagePath == item.imagePath,
-    );
-    if (index != -1) {
-      items[index].quantity++; // ya existe, aumentar cantidad
+  static const double shippingCost = 150.0;
+  static const double ivaRate = 0.16;
+
+  static void addItem(CartItem newItem) {
+    final index = items.indexWhere((i) => i.name == newItem.name);
+    if (index >= 0) {
+      items[index].quantity++;
     } else {
-      items.add(item); // no existe, agregar nuevo
+      items.add(newItem);
     }
   }
 
-  // Aumentar cantidad 
   static void increaseQuantity(int index) {
     items[index].quantity++;
   }
 
-  // Disminuir cantidad. 
   static void decreaseQuantity(int index) {
     if (items[index].quantity > 1) {
       items[index].quantity--;
     } else {
-      items.removeAt(index); // se elimina
+      items.removeAt(index);
     }
   }
 
-  // Eliminar 
   static void removeItem(int index) {
     items.removeAt(index);
   }
 
-  // Total 
-  static double getTotal() {
-    double total = 0;
-    for (var item in items) {
-      total += double.parse(item.price) * item.quantity;
-    }
-    return total;
+  static void clear() {
+    items.clear();
   }
 
-  // Cantidad total 
+  static double getSubtotal() {
+    return items.fold(0, (sum, item) => sum + item.totalPrice);
+  }
+
+  static double getIVA() {
+    return getSubtotal() * ivaRate;
+  }
+
+  static double getTotal() {
+    return items.isEmpty ? 0 : getSubtotal() + getIVA() + shippingCost;
+  }
+
   static int getCount() {
-    int count = 0;
-    for (var item in items) {
-      count += item.quantity;
-    }
-    return count;
+    return items.fold(0, (sum, item) => sum + item.quantity);
   }
 }

@@ -1,9 +1,9 @@
 import 'package:donut_app/models/cart.dart';
+import 'package:donut_app/screens/checkout_screen.dart';
 import 'package:flutter/material.dart';
 
 class CartScreen extends StatefulWidget {
   final VoidCallback onCartUpdated;
-
   const CartScreen({super.key, required this.onCartUpdated});
 
   @override
@@ -11,22 +11,18 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-
-
-  void increaseItem(int index) {
-    setState(() {
-      Cart.increaseQuantity(index);
-    });
-    //Actualizar  el contador
+  void _increase(int index) {
+    setState(() => Cart.increaseQuantity(index));
     widget.onCartUpdated();
   }
 
-  // Disminuir cantidad - refrescar
-  void decreaseItem(int index) {
-    setState(() {
-      Cart.decreaseQuantity(index);
-    });
-    //Actualizar el contador
+  void _decrease(int index) {
+    setState(() => Cart.decreaseQuantity(index));
+    widget.onCartUpdated();
+  }
+
+  void _remove(int index) {
+    setState(() => Cart.removeItem(index));
     widget.onCartUpdated();
   }
 
@@ -37,36 +33,30 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        //Botón de regreso
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.grey[800]),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'My Cart',
-          style: TextStyle(
-            color: Colors.grey[800],
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
+        title: Text('Mi Carrito',
+            style: TextStyle(
+                color: Colors.grey[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 22)),
       ),
       body: Cart.items.isEmpty
-          //Si está vacío
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey[400]),
+                  Icon(Icons.shopping_cart_outlined,
+                      size: 80, color: Colors.grey[400]),
                   const SizedBox(height: 16),
-                  Text(
-                    'Your cart is empty',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[500]),
-                  ),
+                  Text('Tu carrito está vacío',
+                      style:
+                          TextStyle(fontSize: 18, color: Colors.grey[500])),
                 ],
               ),
             )
-          //Si hay productos
           : Column(
               children: [
                 Expanded(
@@ -84,68 +74,69 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         child: Row(
                           children: [
-                            //Imagen del producto
+                            // Ícono
                             Container(
-                              width: 60,
-                              height: 60,
+                              width: 56,
+                              height: 56,
                               decoration: BoxDecoration(
                                 color: Colors.grey[100],
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(6.0),
-                                child: Image.asset(item.imagePath),
-                              ),
+                              child: Icon(Icons.devices,
+                                  color: Colors.grey[500], size: 28),
                             ),
                             const SizedBox(width: 12),
-                            //Nombre y precio del producto
+                            // Nombre y precio
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    item.name,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                                  Text(item.name,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14)),
+                                  const SizedBox(height: 2),
+                                  Text(item.category,
+                                      style: TextStyle(
+                                          color: Colors.grey[500],
+                                          fontSize: 12)),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '\$${item.price}',
-                                    style: TextStyle(
-                                      color: Colors.pink[400],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
+                                      '\$${item.totalPrice.toStringAsFixed(0)}',
+                                      style: TextStyle(
+                                          color: Colors.pink[400],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15)),
                                 ],
                               ),
                             ),
-                            //Botones 
+                            // Controles cantidad
                             Column(
                               children: [
-                                //Botón aumentar
                                 GestureDetector(
-                                  onTap: () => increaseItem(index),
-                                  child: Icon(Icons.add, color: Colors.pink[400], size: 20),
+                                  onTap: () => _increase(index),
+                                  child: Icon(Icons.add,
+                                      color: Colors.pink[400], size: 20),
                                 ),
                                 const SizedBox(height: 4),
-                                //Cantidad actual
-                                Text(
-                                  '${item.quantity}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                Text('${item.quantity}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
                                 const SizedBox(height: 4),
-                                //Botón disminuir
                                 GestureDetector(
-                                  onTap: () => decreaseItem(index),
-                                  child: Icon(Icons.remove, color: Colors.pink[400], size: 20),
+                                  onTap: () => _decrease(index),
+                                  child: Icon(Icons.remove,
+                                      color: Colors.pink[400], size: 20),
                                 ),
                               ],
+                            ),
+                            const SizedBox(width: 8),
+                            // Eliminar
+                            GestureDetector(
+                              onTap: () => _remove(index),
+                              child: Icon(Icons.delete_outline,
+                                  color: Colors.grey[400], size: 22),
                             ),
                           ],
                         ),
@@ -154,6 +145,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
 
+                // Resumen de costos
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: const BoxDecoration(
@@ -165,40 +157,54 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   child: Column(
                     children: [
-                      //Total
+                      _Row('Subtotal',
+                          '\$${Cart.getSubtotal().toStringAsFixed(2)}'),
+                      const SizedBox(height: 8),
+                      _Row('IVA (16%)',
+                          '\$${Cart.getIVA().toStringAsFixed(2)}'),
+                      const SizedBox(height: 8),
+                      _Row('Envío', '\$${Cart.shippingCost.toStringAsFixed(2)}'),
+                      const Divider(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text('Total',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text('\$${Cart.getTotal().toStringAsFixed(0)}',
                               style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.pink[400],
-                              )),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                              '\$${Cart.getTotal().toStringAsFixed(2)} MXN',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.pink[400])),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      //Botón de pago
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => CheckoutScreen(
+                                      onCartUpdated: widget.onCartUpdated)),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pink[400],
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                                borderRadius: BorderRadius.circular(16)),
                           ),
-                          child: Text(
-                            'Proceed to Pay  \$${Cart.getTotal().toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                          child: const Text(
+                            'Proceder al Pago',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
                           ),
                         ),
                       ),
@@ -207,6 +213,25 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ],
             ),
+    );
+  }
+}
+
+class _Row extends StatelessWidget {
+  final String label;
+  final String value;
+  const _Row(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+        Text(value,
+            style: const TextStyle(
+                fontSize: 14, fontWeight: FontWeight.w600)),
+      ],
     );
   }
 }
