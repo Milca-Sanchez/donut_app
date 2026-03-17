@@ -29,12 +29,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  // Sincronización corregida para que el estado se actualice al escribir
   void _onCreditCardModelChange(CreditCardModel model) {
     setState(() {
       cardNumber = model.cardNumber;
       expiryDate = model.expiryDate;
-      cardHolderName = model.cardHolderName; // Actualiza el nombre del titular
+      cardHolderName = model.cardHolderName;
       cvvCode = model.cvvCode;
       isCvvFocused = model.isCvvFocused;
     });
@@ -42,24 +41,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> _processPago() async {
     if (formKey.currentState!.validate()) {
-      // Validaciones manuales
-      if (cardNumber.replaceAll(' ', '').length < 16) {
-        _showError('Ingresa un número de tarjeta válido (16 dígitos)');
-        return;
-      }
-      if (expiryDate.length < 5) {
-        _showError('Ingresa una fecha de expiración válida');
-        return;
-      }
-      if (cvvCode.length < 3) {
-        _showError('Ingresa un CVV válido (mínimo 3 dígitos)');
-        return;
-      }
-      if (cardHolderName.trim().isEmpty) {
-        _showError('Ingresa el nombre del titular');
-        return;
-      }
-
       setState(() => _isProcessing = true);
 
       showDialog(
@@ -68,40 +49,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
         builder: (_) => const _LoadingDialog(),
       );
 
-      // Simulación de carga
+      // Simulación de pasarela de pago
       await Future.delayed(const Duration(seconds: 3));
 
       if (mounted) Navigator.of(context).pop();
 
-      final orderNumber =
-          'TS-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
-      final total = Cart.getTotal();
-      final itemCount = Cart.getCount();
-
+      final orderNumber = 'TS-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+      
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => SuccessScreen(
               orderNumber: orderNumber,
-              total: total,
-              itemCount: itemCount,
+              total: Cart.getTotal(),
+              itemCount: Cart.getCount(),
               onCartUpdated: widget.onCartUpdated,
             ),
           ),
         );
       }
     }
-  }
-
-  void _showError(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: Colors.red.shade400,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override
@@ -126,7 +94,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           children: [
             const SizedBox(height: 16),
 
-            // Tarjeta visual (Corregida con visibilidad de nombre)
             CreditCardWidget(
               cardNumber: cardNumber,
               expiryDate: expiryDate,
@@ -136,14 +103,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
               onCreditCardWidgetChange: (_) {},
               cardBgColor: const Color(0xFF1A237E),
               isSwipeGestureEnabled: true,
-              isHolderNameVisible: true, // Habilita el nombre en el diseño
+              isHolderNameVisible: true,
+              labelCardHolder: 'NOMBRE DEL TITULAR',
+              labelValidThru: 'VÁLIDO HASTA',
             ),
 
-            // Resumen del total
+            // Resumen de total
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: BoxDecoration(
                 color: const Color(0xFF1A237E).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(14),
@@ -164,9 +132,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            
 
-            // Formulario (Corregido con visibilidad de nombre)
             CreditCardForm(
               formKey: formKey,
               cardNumber: cardNumber,
@@ -175,31 +142,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
               cvvCode: cvvCode,
               onCreditCardModelChange: _onCreditCardModelChange,
               themeColor: const Color(0xFF1A237E),
-              isHolderNameVisible: true, // Habilita el campo para escribir el nombre
-              cardNumberDecoration: _inputDecoration('Número de Tarjeta',
-                  'XXXX XXXX XXXX XXXX'),
-              expiryDateDecoration:
-                  _inputDecoration('Fecha de Expiración', 'MM/AA'),
+              isHolderNameVisible: true,
+              cardNumberDecoration: _inputDecoration('Número de Tarjeta', 'XXXX XXXX XXXX XXXX'),
+              expiryDateDecoration: _inputDecoration('Fecha de Expiración', 'MM/AA'),
               cvvCodeDecoration: _inputDecoration('CVV', '•••'),
-              cardHolderDecoration:
-                  _inputDecoration('Nombre del Titular', 'Ej: Milca Sánchez'),
+              cardHolderDecoration: _inputDecoration('Nombre del Titular', 'Ej: Milca Sánchez'),
             ),
 
-            const SizedBox(height: 8),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Icon(Icons.credit_card,
-                      color: Colors.grey[400], size: 20),
-                  const SizedBox(width: 8),
-                  Text('Aceptamos Visa, Mastercard y American Express',
-                      style: TextStyle(
-                          color: Colors.grey[500], fontSize: 12)),
-                ],
-              ),
-            ),
             const SizedBox(height: 20),
 
             Padding(
@@ -217,8 +166,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.lock_outline,
-                          color: Colors.white, size: 18),
+                      const Icon(Icons.lock_outline, color: Colors.white, size: 18),
                       const SizedBox(width: 8),
                       Text(
                           'Pagar \$${Cart.getTotal().toStringAsFixed(2)} MXN',
@@ -252,8 +200,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           borderSide: BorderSide(color: Colors.grey.shade200)),
       focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: Color(0xFF1A237E), width: 1.5)),
+          borderSide: const BorderSide(color: Color(0xFF1A237E), width: 1.5)),
     );
   }
 }
@@ -264,26 +211,19 @@ class _LoadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(
-              color: Color(0xFF1A237E),
-              strokeWidth: 3,
-            ),
+            const CircularProgressIndicator(color: Color(0xFF1A237E)),
             const SizedBox(height: 24),
             const Text('Procesando tu pago',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 18)),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 8),
-            Text('Conectando con el servidor bancario...',
-                style: TextStyle(
-                    color: Colors.grey[500], fontSize: 13),
-                textAlign: TextAlign.center),
+            Text('Conectando con el servidor...',
+                style: TextStyle(color: Colors.grey[500], fontSize: 13)),
           ],
         ),
       ),
